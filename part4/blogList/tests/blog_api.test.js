@@ -133,6 +133,47 @@ describe('when there is initially one user in db', () => {
         const usersAtEnd = await helper.usersInDb()
         expect(usersAtEnd).toEqual(usersAtStart)
       })
+    test('check invalid username creation', async () => {
+        const usersAtStart = await helper.usersInDb()
+    
+        const newUser1 = {
+          username: 'ro',
+          name: 'test1',
+          password: 'password',
+        }
+
+        const result = await api    
+            .post('/api/users')
+            .send(newUser1)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+    
+        expect(result.body.error).toContain('username must be longer than 3 characters')
+    
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toEqual(usersAtStart)
+
+    })
+    test('check invalid password creation', async () => {
+        const usersAtStart = await helper.usersInDb()
+    
+        const newUser1 = {
+            username: 'rooot',
+            name: 'test2',
+            password: 'pa',
+        }
+        const result = await api    
+            .post('/api/users')
+            .send(newUser1)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+    
+        expect(result.body.error).toContain('password must be longer than 3 characters')
+    
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toEqual(usersAtStart)
+
+    })
   })
 
 
